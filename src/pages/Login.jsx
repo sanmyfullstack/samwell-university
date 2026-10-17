@@ -1,21 +1,64 @@
-import React from 'react';
-import { 
-  Box, 
-  Button, 
-  Checkbox, 
-  CssBaseline, 
-  FormControlLabel, 
-  Grid, 
-  Link, 
-  TextField, 
-  Typography 
-} from '@mui/material';
+import { useState } from "react";
+import {
+  Box,
+  Button,
+  Checkbox,
+  CssBaseline,
+  FormControlLabel,
+  Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function SharpLoginDesign() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  let [message, setMessage] = useState("");
+  let [error, setError] = useState("");
+  let [loading, setLoading] = useState(false);
+
+  // handle form submission
+  const handleLoginSubmit = async (e) => {
+    try {
+      setLoading(true);
+      e.preventDefault();
+      // clear previous messages
+      setMessage("");
+      setError("");
+      // front-end validation
+      if (!email || !password) {
+        setError("ALL FIELDS ARE REQUIRED.");
+        setLoading(false);
+        return;
+      }
+      // payload for login request
+      const payload = {
+        email: email,
+        password: password,
+      };
+      // send login request to the backend API
+      const response = await axios.post(
+        "https://students-learning-api.onrender.com/api/auth/login",
+        payload,
+      );
+      setLoading(false);
+      // handle successful login
+      setMessage("LOGIN SUCCESSFUL!");
+      navigate("/");
+      console.log(response);
+    } catch (error) {
+      setError("Invalid email or password");
+      setLoading(false);
+    }
+  };
+
   return (
-    <Grid container component="main" sx={{ height: '100vh' }}>
+    <Grid container component="main" sx={{ height: "100vh" }}>
       <CssBaseline />
-      
+
       {/* Left Column: Visual branding area */}
       <Grid
         item
@@ -23,49 +66,70 @@ export default function SharpLoginDesign() {
         sm={4}
         md={7}
         sx={{
-          backgroundImage: 'url(https://unsplash.com)',
-          backgroundRepeat: 'no-repeat',
-          backgroundColor: '#111',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'flex-end',
+          backgroundImage: "url(https://unsplash.com)",
+          backgroundRepeat: "no-repeat",
+          backgroundColor: "#111",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end",
           p: 6,
-          color: '#fff',
+          color: "#fff",
         }}
       >
-        <Typography variant="h3" component="h1" sx={{ fontWeight: 900, letterSpacing: '-0.05em', mb: 1 }}>
+        <Typography
+          variant="h3"
+          component="h1"
+          sx={{ fontWeight: 900, letterSpacing: "-0.05em", mb: 1 }}
+        >
           THE ARCHITECT.
         </Typography>
-        <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.7)', letterSpacing: '0.05em' }}>
-          © 2026 INTERNAL NETWORK SYSTEM.
+        <Typography
+          variant="body1"
+          sx={{ color: "rgba(255,255,255,0.7)", letterSpacing: "0.05em" }}
+        >
+          ©️ 2026 INTERNAL NETWORK SYSTEM.
         </Typography>
       </Grid>
 
       {/* Right Column: Sharp Login Form */}
-      <Grid 
-        item 
-        xs={12} 
-        sm={8} 
-        md={5} 
-        sx={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          justifyContent: 'center', 
+      <Grid
+        item
+        xs={12}
+        sm={8}
+        md={5}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
           px: { xs: 4, md: 10 },
-          backgroundColor: '#fff'
+          backgroundColor: "#fff",
         }}
       >
-        <Box sx={{ maxWidth: 400, width: '100%', mx: 'auto' }}>
-          <Typography variant="h4" component="h2" sx={{ fontWeight: 800, mb: 1, letterSpacing: '-0.03em' }}>
+        <Box sx={{ maxWidth: 400, width: "100%", mx: "auto" }}>
+          <Typography
+            variant="h4"
+            component="h2"
+            sx={{ fontWeight: 800, mb: 1, letterSpacing: "-0.03em" }}
+          >
             SIGN IN
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
             Please enter your credentials to access your terminal.
           </Typography>
+          {message && (
+            <Typography variant="body2" color="success.main" sx={{ mb: 2 }}>
+              {message}
+            </Typography>
+          )}
+          {error && (
+            <Typography variant="body2" color="error" sx={{ mb: 2 }}>
+              {error}
+            </Typography>
+          )}
 
-          <Box component="form" noValidate>
+          <Box component="form" onSubmit={handleLoginSubmit} noValidate>
             <TextField
               margin="normal"
               required
@@ -73,17 +137,27 @@ export default function SharpLoginDesign() {
               id="email"
               label="EMAIL ADDRESS"
               name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
               autoFocus
               InputProps={{ sx: { borderRadius: 0 } }}
-              InputLabelProps={{ sx: { letterSpacing: '0.1em', fontSize: '0.75rem' } }}
+              InputLabelProps={{
+                sx: { letterSpacing: "0.1em", fontSize: "0.75rem" },
+              }}
               variant="outlined"
               sx={{
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: '#000', borderWidth: '1px' },
-                  '&:hover fieldset': { borderColor: '#000', borderWidth: '2px' },
-                  '&.Mui-focused fieldset': { borderColor: '#000', borderWidth: '2px' },
-                }
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": { borderColor: "#000", borderWidth: "1px" },
+                  "&:hover fieldset": {
+                    borderColor: "#000",
+                    borderWidth: "2px",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#000",
+                    borderWidth: "2px",
+                  },
+                },
               }}
             />
             <TextField
@@ -95,24 +169,64 @@ export default function SharpLoginDesign() {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               InputProps={{ sx: { borderRadius: 0 } }}
-              InputLabelProps={{ sx: { letterSpacing: '0.1em', fontSize: '0.75rem' } }}
+              InputLabelProps={{
+                sx: { letterSpacing: "0.1em", fontSize: "0.75rem" },
+              }}
               variant="outlined"
               sx={{
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: '#000', borderWidth: '1px' },
-                  '&:hover fieldset': { borderColor: '#000', borderWidth: '2px' },
-                  '&.Mui-focused fieldset': { borderColor: '#000', borderWidth: '2px' },
-                }
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": { borderColor: "#000", borderWidth: "1px" },
+                  "&:hover fieldset": {
+                    borderColor: "#000",
+                    borderWidth: "2px",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#000",
+                    borderWidth: "2px",
+                  },
+                },
               }}
             />
-            
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2, mb: 3 }}>
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mt: 2,
+                mb: 3,
+              }}
+            >
               <FormControlLabel
-                control={<Checkbox value="remember" color="default" sx={{ '& .MuiSvgIcon-root': { borderRadius: 0 } }} />}
-                label={<Typography variant="body2" sx={{ fontSize: '0.75rem', letterSpacing: '0.05em' }}>REMEMBER ME</Typography>}
+                control={
+                  <Checkbox
+                    value="remember"
+                    color="default"
+                    sx={{ "& .MuiSvgIcon-root": { borderRadius: 0 } }}
+                  />
+                }
+                label={
+                  <Typography
+                    variant="body2"
+                    sx={{ fontSize: "0.75rem", letterSpacing: "0.05em" }}
+                  >
+                    REMEMBER ME
+                  </Typography>
+                }
               />
-              <Link href="#" variant="body2" color="inherit" sx={{ fontSize: '0.75rem', underline: 'always', letterSpacing: '0.05em' }}>
+              <Link
+                href="#"
+                variant="body2"
+                color="inherit"
+                sx={{
+                  fontSize: "0.75rem",
+                  underline: "always",
+                  letterSpacing: "0.05em",
+                }}
+              >
                 FORGOT PASSWORD?
               </Link>
             </Box>
@@ -125,24 +239,29 @@ export default function SharpLoginDesign() {
                 mt: 1,
                 mb: 3,
                 py: 1.5,
-                backgroundColor: '#000',
-                color: '#fff',
+                backgroundColor: "#000",
+                color: "#fff",
                 borderRadius: 0,
                 fontWeight: 700,
-                letterSpacing: '0.1em',
-                boxShadow: 'none',
-                '&:hover': {
-                  backgroundColor: '#222',
-                  boxShadow: 'none',
+                letterSpacing: "0.1em",
+                boxShadow: "none",
+                "&:hover": {
+                  backgroundColor: "#222",
+                  boxShadow: "none",
                 },
               }}
             >
               ENTER SYSTEM
             </Button>
 
-            <Typography variant="body2" align="center" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-              {'DON\'T HAVE AN ACCOUNT? '}
-              <Link href="/Register" color="inherit" sx={{ fontWeight: 700 }}>
+            <Typography
+              variant="body2"
+              align="center"
+              color="text.secondary"
+              sx={{ fontSize: "0.75rem" }}
+            >
+              {"DON'T HAVE AN ACCOUNT? "}
+              <Link href="#" color="inherit" sx={{ fontWeight: 700 }}>
                 REGISTER
               </Link>
             </Typography>
