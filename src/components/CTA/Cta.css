@@ -1,0 +1,27 @@
+/* CALL TO ACTION */
+.cta {
+    padding: 80px 10%;
+    background-color: #007bff;
+    text-align: center;
+    color: #fff;
+}
+.cta-content h2{
+    font-size: 40px;
+    padding-bottom: 15px;
+}
+.cta-content p{
+    font-size: 19px;
+    padding-bottom: 20px;
+}
+.cta-button{
+    padding: 10px 20px;
+    background-color: whitesmoke;
+    color: black;
+    text-decoration: none;
+    border-radius: 30px;
+    border: none;
+}
+.cta-button:hover{
+    background-color: red;
+    color: whitesmoke;
+}
