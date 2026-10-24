@@ -1,48 +1,81 @@
-import React from 'react'
-import {useState, useEffect} from 'react'
-import "./Testimonials.css";
-import nik from"../../assets/image1.jpg";
-import tag from "../../assets/image 2.jpg";
-import kin from "../../assets/gettyimages-1278977922-170667a.jpg";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ken from "../../assets/image1.jpg";
+import "./Testimonials.css";
 
 const Testimonials = () => {
-const [users, setUsers] = useState([]);
-const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-const getusers = async () => {
-    try{
-        let res = await axios.get("https://jsonplaceholder.typicode.com/users");
-        setUsers(res.data);
-        setLoading(false);
-        console.log(res.data)
-    } catch(error) {
-     setLoading(false);
+  const navigate = useNavigate();
+
+  const getUsers = async () => {
+    try {
+      const response = await axios.get(
+        "https://students-learning-api.onrender.com/api/auth"
+      );
+
+      setUsers(
+        Array.isArray(response.data)
+          ? response.data
+          : response.data.users || response.data.data || []
+      );
+    } catch (error) {
+      console.log(error);
+      setError("Unable to load users. Please try again.");
+    } finally {
+      setLoading(false);
     }
-};
+  };
+
   useEffect(() => {
-    getusers();
-  }, [])
+    getUsers();
+  }, []);
+
   return (
     <div>
-       {/* <!--TESTIMONY--> */}
-    <section id="testimonials">
-        <h4>TESTIMONIALS</h4>
-        <h2> what our students says</h2>
-        <div className="testimonials-container">
-            {users.map((user) => (
-            <div className="card" key={user.id}>
-                <img src={nik} alt=" testiomnials"/>
-                <h3>{user.name}</h3>
-                <h3>{user.email}</h3>
-                <h3>username:{user.username}</h3>
-                <p> This academy changed my life, i learnt fullstack and i designed my own website that gives me lots of income. I also got a job with a health sector in the UK that gets me paid in dollars</p>
-            </div>
-        ))}
-        </div>
-    </section>
-    </div>
-  )
-}
+      <section className="testimonials">
+        <h4>TESTIMONIES</h4>
+        <h2>Feedback From Our Students</h2>
 
-export default Testimonials
+        {loading && <p>Loading users...</p>}
+        {error && <p role="alert">{error}</p>}
+
+        {!loading && !error && users.length === 0 && (
+          <p>No users found.</p>
+        )}
+
+        <div className="Testimonial-container">
+          {users.map((user) => (
+            <div className="card" key={user._id || user.id}>
+              <img
+                src={ken}
+                alt={`${user.firstName || "User"} profile`}
+              />
+
+              <h3>
+                {user.firstName} {user.lastName}
+              </h3>
+
+              <p>Email: {user.email}</p>
+              <p>Address: {user.address || "Not provided"}</p>
+
+              <button
+                className="details-btn"
+                onClick={() =>
+                  navigate(`/users/${user._id || user.id}`)
+                }
+              >
+                View Details
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Testimonials;

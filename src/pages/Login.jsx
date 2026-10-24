@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {Link as RouterLink } from "react-router-dom";
 import {
   Box,
   Button,
@@ -261,9 +262,10 @@ export default function SharpLoginDesign() {
               sx={{ fontSize: "0.75rem" }}
             >
               {"DON'T HAVE AN ACCOUNT? "}
-              <Link href="#" color="inherit" sx={{ fontWeight: 700 }}>
+              <button><RouterLink to="/Register" color="inherit" sx={{ fontWeight: 700 }}>
                 REGISTER
-              </Link>
+              </RouterLink>
+              </button>
             </Typography>
           </Box>
         </Box>
